@@ -6,7 +6,10 @@ import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
   const user = useUser();
-  const { data } = api.posts.getAll.useQuery();
+  const { data, isLoading } = api.posts.getAll.useQuery();
+
+  if (isLoading) return <div>Loading data...</div>;
+  if (!data) return <div>Error loading data</div>;
 
   return (
     <>
@@ -26,7 +29,7 @@ const Home: NextPage = () => {
                 {!!user.isSignedIn && <SignOutButton/> }
             </div>
             <div className="flex flex-col">
-                {data?.map( (post) => (
+                {data.map( (post) => (
                     <div key={post.id} className="border-b border-slate-400 p-8" >{post.content}</div>
                 ))}
             </div>
