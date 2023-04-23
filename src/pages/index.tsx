@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import { SignInButton , SignOutButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 
-import { api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
@@ -24,6 +24,28 @@ const CreatePostWizard = () => {
     );
 }
 
+type PostWithUser = RouterOutputs["posts"]["getAll"][number];
+
+const PostView = (props:  PostWithUser) => {
+  const {post, author} = props;
+
+  return (
+    <div key={post.id} className="flex border-b border-slate-400 p-4 gap-3" >
+      <img
+        src={author.profilePicture}
+        alt="Author's image"
+        className="h-14 w-14 rounded-full"
+      />
+      <div className="flex flex-col">
+          <div className="flex gap-2">
+            <span className="font-bold">{`${author.firstName} ${author.lastName}`}</span>
+            <span className="font-light">{`@${author.username}`}</span>
+          </div>
+          <span className="">{post.content}</span>
+      </div>
+    </div>
+  );
+}
 
 const Home: NextPage = () => {
   const user = useUser();
@@ -50,8 +72,8 @@ const Home: NextPage = () => {
                 {!!user.isSignedIn && <CreatePostWizard /> }
             </div>
             <div className="flex flex-col">
-                {data.map( (post) => (
-                    <div key={post.id} className="border-b border-slate-400 p-8" >{post.content}</div>
+                {data.map((fullPost) => (
+                    <PostView {...fullPost} key={fullPost.post.id} />
                 ))}
             </div>
         </div>
