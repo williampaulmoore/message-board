@@ -4,6 +4,27 @@ import Head from "next/head";
 
 import { api } from "~/utils/api";
 
+const CreatePostWizard = () => {
+    const { user } = useUser();
+
+    if (!user) return null;
+
+    return (
+      <div className="flex gap-3 w-full">
+          <img
+            src={user.profileImageUrl}
+            alt="Profile image"
+            className="h-14 w-14 rounded-full"
+          />
+          <input
+            placeholder="enter post"
+            className="bg-transparent grow"/>
+
+      </div>
+    );
+}
+
+
 const Home: NextPage = () => {
   const user = useUser();
   const { data, isLoading } = api.posts.getAll.useQuery();
@@ -26,7 +47,7 @@ const Home: NextPage = () => {
                         <SignInButton/>
                     </div>
                 ) }
-                {!!user.isSignedIn && <SignOutButton/> }
+                {!!user.isSignedIn && <CreatePostWizard /> }
             </div>
             <div className="flex flex-col">
                 {data.map( (post) => (
