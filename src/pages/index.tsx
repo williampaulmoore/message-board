@@ -53,12 +53,26 @@ const PostView = (props:  PostWithUser) => {
   );
 }
 
+const Feed = () => {
+    const { data, isLoading } = api.posts.getAll.useQuery();
+
+    if(isLoading) return <LoadingPage />
+    if(!data) return <div>Error Loading data</div>
+
+    return(
+             <div className="flex flex-col">
+                {data.map((fullPost) => (
+                    <PostView {...fullPost} key={fullPost.post.id} />
+                ))}
+            </div>
+    );
+}
+
 const Home: NextPage = () => {
   const user = useUser();
-  const { data, isLoading } = api.posts.getAll.useQuery();
 
-  if (isLoading) return <LoadingPage />
-  if (!data) return <div>Error loading data</div>;
+  // eager load of posts
+  api.posts.getAll.useQuery();
 
   return (
     <>
@@ -77,11 +91,7 @@ const Home: NextPage = () => {
                 ) }
                 {!!user.isSignedIn && <CreatePostWizard /> }
             </div>
-            <div className="flex flex-col">
-                {data.map((fullPost) => (
-                    <PostView {...fullPost} key={fullPost.post.id} />
-                ))}
-            </div>
+            <Feed />
         </div>
       </main>
     </>
