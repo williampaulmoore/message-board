@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
-import { SignInButton , SignOutButton, useUser } from "@clerk/nextjs";
+import { SignInButton , useUser } from "@clerk/nextjs";
 import Head from "next/head";
+import { useState } from "react";
 
 import { type RouterOutputs, api } from "~/utils/api";
 import dayjs from "dayjs" ;
@@ -11,6 +12,8 @@ dayjs.extend(relativeTime);
 
 const CreatePostWizard = () => {
     const { user } = useUser();
+    const [ input, setInput ] = useState("");
+    const { mutate } = api.posts.create.useMutation();
 
     if (!user) return null;
 
@@ -23,8 +26,17 @@ const CreatePostWizard = () => {
           />
           <input
             placeholder="enter post"
-            className="bg-transparent grow"/>
-
+            className="bg-transparent grow"
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    alert(`Post: ${input}`);
+                    mutate({ content: input });
+                }
+            }}
+          />
       </div>
     );
 }
