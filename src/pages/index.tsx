@@ -13,7 +13,13 @@ dayjs.extend(relativeTime);
 const CreatePostWizard = () => {
     const { user } = useUser();
     const [ input, setInput ] = useState("");
-    const { mutate, isLoading: isPosting } = api.posts.create.useMutation();
+    const ctx = api.useContext();
+    const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+        onSuccess: () => {
+            setInput("");
+            void ctx.posts.getAll.invalidate();
+        },
+    });
 
     if (!user) return null;
 
