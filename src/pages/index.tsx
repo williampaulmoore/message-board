@@ -13,7 +13,7 @@ dayjs.extend(relativeTime);
 const CreatePostWizard = () => {
     const { user } = useUser();
     const [ input, setInput ] = useState("");
-    const { mutate } = api.posts.create.useMutation();
+    const { mutate, isLoading: isPosting } = api.posts.create.useMutation();
 
     if (!user) return null;
 
@@ -32,10 +32,10 @@ const CreatePostWizard = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                    alert(`Post: ${input}`);
                     mutate({ content: input });
                 }
             }}
+            disabled={isPosting}
           />
       </div>
     );
