@@ -3,6 +3,7 @@ import Head from "next/head";
 import  Image from "next/image";
 import { LoadingPage } from "~/components/loading";
 import { PageLayout } from "~/components/layout";
+import { PostView } from "~/components/postview";
 import { type RouterOutputs, api } from "~/utils/api";
 
 type ProfileUser = RouterOutputs["profile"]["getUserByUserName"];
@@ -16,7 +17,7 @@ const ProfileHeaderFullName = (user: ProfileUser) => {
 const ProfileHeader = (user: ProfileUser) => {
 
     return(
-      <>
+      <div>
        <ProfileHeaderFullName {...user}/>
         <div className="h-48">
           <div className="relative h-32 bg-slate-600" >
@@ -32,7 +33,22 @@ const ProfileHeader = (user: ProfileUser) => {
         <br />
         <ProfileHeaderFullName {...user}/>
         <div className="font-light ml-4">{`@${user.username ?? "unknown"}`}</div>
-      </>
+      </div>
+    );
+}
+
+const ProfileFeed = (props: {userId: string}) => {
+    const {data, isLoading} = api.posts.getPostsByUserId.useQuery({
+        userId: props.userId
+    });
+
+    if(isLoading) return <LoadingPage />
+    if(!data || data.length === 0) return <div>User has not posted</div>
+
+    return(
+        <div className="flex flex-col" data-name="ProfileFeed">
+          {data.map( p => <PostView {...p} key={p.post.id} />)}
+        </div>
     );
 }
 
@@ -56,6 +72,7 @@ const Profile:  NextPage = () => {
         </Head>
         <PageLayout>
             <ProfileHeader {...data}/>
+            <ProfileFeed  userId={data.id}/>
         </PageLayout>
       </>
     );
