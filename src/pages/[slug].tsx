@@ -7,11 +7,17 @@ import { type RouterOutputs, api } from "~/utils/api";
 
 type ProfileUser = RouterOutputs["profile"]["getUserByUserName"];
 
+const ProfileHeaderFullName = (user: ProfileUser) => {
+    return(
+        <div className="font-bold ml-4 text-2xl">{`${user.firstName} ${user.lastName}`}</div>
+    )
+}
 
 const ProfileHeader = (user: ProfileUser) => {
 
     return(
       <>
+       <ProfileHeaderFullName {...user}/>
         <div className="h-48">
           <div className="relative h-32 bg-slate-600" >
             <Image
@@ -24,7 +30,7 @@ const ProfileHeader = (user: ProfileUser) => {
           </div>
         </div>
         <br />
-        <div className="font-bold ml-4">{`${user.firstName} ${user.lastName}`}</div>
+        <ProfileHeaderFullName {...user}/>
         <div className="font-light ml-4">{`@${user.username ?? "unknown"}`}</div>
       </>
     );
