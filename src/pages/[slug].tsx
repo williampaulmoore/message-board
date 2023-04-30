@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import  Image from "next/image";
+import { useRouter } from "next/router";
 import { LoadingPage } from "~/components/loading";
 import { PageLayout } from "~/components/layout";
 import { PostView } from "~/components/postview";
@@ -55,7 +56,10 @@ const ProfileFeed = (props: {userId: string}) => {
 
 // t(wpm). find out how to set up routing to this page so that it can be called profile rather than slug. 
 const Profile:  NextPage = () => {
-    const username  = "williampaulmoore";
+    const router = useRouter();
+    const slug = (Array.isArray(router.query.slug) ? router.query.slug[0] : router.query.slug) ?? "unknown";
+    const username = slug.replace("@", "");
+
     const { data, isLoading } = api.profile.getUserByUserName.useQuery({
         username
     });
